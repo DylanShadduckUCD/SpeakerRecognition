@@ -89,7 +89,7 @@ test_file = "C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\Tes
 y_test = y_test./max(abs(y_test));
 
 % Play the audio
-sound(y_test, fs)
+%sound(y_test, fs)
 
 % Trim the silence
 y_test = trim_silence(y_test, vol_min);
