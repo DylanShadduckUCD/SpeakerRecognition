@@ -32,12 +32,12 @@ for k=1:length(theFiles)
     
     [y, fs] = audioread(fullFileName);
     
-    if k == 2
-        %sound(y, fs)
-    end
-    
     % Normalizing the data
     y = y./max(abs(y));
+    
+    if k == 11
+        %sound(y, fs);
+    end
     
     % Trimming the audio with normalized minimum volume of 0.05
     y = trim_silence(y, vol_min);
@@ -82,14 +82,11 @@ end
 % hold off
 
 %% Check if the first file has a match
-test_file = "C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\Test\s9.wav";
+test_file = "C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\Test\s1.wav";
 
 % Read in the test file and normalize the resulting vector
 [y_test, fs] = audioread(test_file);
 y_test = y_test./max(abs(y_test));
-
-% Play the audio
-sound(y_test, fs)
 
 % Trim the silence
 y_test = trim_silence(y_test, vol_min);
