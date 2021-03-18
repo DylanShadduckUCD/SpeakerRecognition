@@ -1,5 +1,10 @@
 # SpeakerRecognition
 
+## Intended Use
+The intention is that this repository can be accessed by anyone and run on their own machine provided that all of the files have been downloaded properly.
+The main program used here is speaker_predict_DylanShadduck.m
+Other matlab files in this repository were used to generate the method used in speaker_predict_DylanShadduck.m which is now my third iteration of this project. 
+
 ## Function Definitions
 
 frame_block(data, N, M)
