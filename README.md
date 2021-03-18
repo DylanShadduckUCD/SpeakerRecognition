@@ -5,6 +5,37 @@ The intention is that this repository can be accessed by anyone and run on their
 The main program used here is speaker_predict_DylanShadduck.m
 Other matlab files in this repository were used to generate the method used in speaker_predict_DylanShadduck.m which is now my third iteration of this project. 
 
+```
+% Example Usage of the functions in speaker_predict_DylanShadduck.m
+
+% Define the locations of the train and test folders
+train_folder = "PATH\TO\TRAIN\FOLDER";
+test_folder = "PATH\TO\TEST\FOLDER";
+
+% Set the seed of random number generation for completely repeatable results
+rng("default");
+
+% Set blocking parameters
+N = 256;
+M = 100;
+
+% Set mel filter number
+K = 20;
+
+% Set the number of clusters for kmeans clustering 
+% My testing shows three or four clusters perform quite well
+clusters = 3;
+
+% Train the model
+C = train_model(train_folder, N, M, K, clusters);
+
+% Predict which speaker in the test dataset corresponds to the training dataset
+predict_speaker(C, test_folder, train_folder, N, M, K);
+
+% Generate the plots
+generate_plots(train_folder)';
+```
+
 ## Function Definitions
 
 frame_block(data, N, M)
