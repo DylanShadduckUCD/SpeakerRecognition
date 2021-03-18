@@ -23,7 +23,7 @@ C = train_model(train_folder, N, M, K, clusters);
 predict_speaker(C, test_folder, train_folder, N, M, K)
 
 % Plotting
-generate_plots(train_folder);
+%generate_plots(train_folder);
 
 %% Functions
 
@@ -151,11 +151,11 @@ function generate_plots(train_folder)
     title("Mel Filters")
     
     % Getting data for a second user for comparison
-    [y2, fs] = audioread(strcat(train_folder, "s12.wav"));
+    [y2, fs] = audioread(strcat(train_folder, "s1.wav"));
     y2 = y2./max(abs(y2));
     y2 = trim_silence(y2, 0.05);
     
-    [y3, fs] = audioread(strcat("C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\Test\", "Pico_7.wav"));
+    [y3, fs] = audioread(strcat(train_folder, "s6.wav"));
     y3 = y3./max(abs(y3));
     y3 = trim_silence(y3, 0.05);
     
@@ -189,7 +189,7 @@ function generate_plots(train_folder)
     scatter(C1(:, 7), C1(:,15), [], "rx")
     scatter(mfcc_2(7, :), mfcc_2(15, :))
     scatter(C2(:, 7), C2(:,15), [], "kx")
-    legend("User 12", "Centroids User 12", "User 13", "Centroids User 13")
+    legend("User 1", "Centroids User 1", "User 6", "Centroids User 6")
     xlabel("MFCC 7")
     ylabel("MFCC 15")
     hold off
@@ -423,7 +423,7 @@ function mfcc_coeff = get_mfcc(data, samp_freq, fft_length, overlap_length, mel_
         % Look at stft for our audio signal
         figure(3)
         stft(data, samp_freq, "Window", hamming(fft_length), "OverlapLength", overlap_length, "FFTLength", fft_length, "FrequencyRange", "Onesided")
-        title(strcat("STFT"))
+        title("STFT")
         
         % Plotting our mel filter bank
         figure(4)

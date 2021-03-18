@@ -10,7 +10,7 @@ train_folder = "C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\
 test_folder = "C:\Users\Dylan\Documents\Winter 2021\EEC 201\SpeakerRecognition\Test\";
 
 % Setting the seed for random number generation for reproducible results
-rng("default")
+rng(1)
 
 % Start by training the model
 N = 256;
@@ -39,7 +39,7 @@ function generate_plots(train_folder)
     % Create a variable to keep track of our figure count
     fig_count = 1;
     
-    base_auido_plot = figure("name", "Test 1: Raw Audio");
+    figure("name", "Test 1: Raw Audio");
     hold on
     fig_count = fig_count + 1;
     
@@ -65,7 +65,7 @@ function generate_plots(train_folder)
     % Now let's plot the trimmed data
     
     % Generating trimmed audio figure
-    trimmed_audio_plot = figure("name", "Test 1: Trimmed/Normalized Audio");
+    figure("name", "Test 1: Trimmed/Normalized Audio");
     hold on
     fig_count = fig_count + 1;
     
@@ -142,7 +142,7 @@ function generate_plots(train_folder)
     % Plotting the mel frequency banks
     m = mel_bank(fs, 256, 20, true);
     
-    mel_fig = figure("name", "Test 3: Mel Filter Bank");
+    figure("name", "Test 3: Mel Filter Bank");
     hold on
     for n=1:20
         plot(linspace(0, floor(256/2), floor(256/2 + 1)), m(n,:))
@@ -151,19 +151,23 @@ function generate_plots(train_folder)
     title("Mel Filters")
     
     % Getting data for a second user for comparison
-    [y2, fs] = audioread(strcat(train_folder, "s6.wav"));
+    [y2, fs] = audioread(strcat(train_folder, "s12.wav"));
     y2 = y2./max(abs(y2));
     y2 = trim_silence(y2, 0.05);
+    
+    [y3, fs] = audioread(strcat(train_foldre, "Pico_7.wav"));
+    y3 = y3./max(abs(y3));
+    y3 = trim_silence(y3, 0.05);
     
     % Calculating mfcc and plotting the points for two users
     N = 256;
     M = 100;
     K = 20;
-    mfcc_1 = get_mfcc(y, fs, N, M, K, false);
-    mfcc_2 = get_mfcc(y2, fs, N, M, K, false);
+    mfcc_1 = get_mfcc(y2, fs, N, M, K, false);
+    mfcc_2 = get_mfcc(y3, fs, N, M, K, false);
     
     % Plotting the mfcc for two users
-    mfcc_plot = figure("name", "Test 5: MFCC Comparison");
+    figure("name", "Test 5: MFCC Comparison");
     fig_count = fig_count + 1;
     hold on
     scatter(mfcc_1(7, :), mfcc_1(15, :))
@@ -185,7 +189,7 @@ function generate_plots(train_folder)
     scatter(C1(:, 7), C1(:,15), [], "rx")
     scatter(mfcc_2(7, :), mfcc_2(15, :))
     scatter(C2(:, 7), C2(:,15), [], "kx")
-    legend("User 1", "Centroids User 1", "User 6", "Centroids User 6")
+    legend("User 12", "Centroids User 12", "User 13", "Centroids User 13")
     xlabel("MFCC 7")
     ylabel("MFCC 15")
     hold off
@@ -419,7 +423,7 @@ function mfcc_coeff = get_mfcc(data, samp_freq, fft_length, overlap_length, mel_
         % Look at stft for our audio signal
         figure(3)
         stft(data, samp_freq, "Window", hamming(fft_length), "OverlapLength", overlap_length, "FFTLength", fft_length, "FrequencyRange", "Onesided")
-        title(strcat("STFT"))
+        title("STFT")
         
         % Plotting our mel filter bank
         figure(4)
