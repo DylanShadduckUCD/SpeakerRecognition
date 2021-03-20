@@ -20,10 +20,13 @@ clusters = 3;
 C = train_model(train_folder, N, M, K, clusters);
 
 % Now let's test our model
-predict_speaker(C, test_folder, train_folder, N, M, K)
+%predict_speaker(C, test_folder, train_folder, N, M, K, false)
 
 % Plotting
 %generate_plots(train_folder);
+
+% Predict our model with notch filtering
+predict_speaker(C, test_folder, train_folder, N, M, K, true)
 
 %% Functions
 
@@ -196,7 +199,7 @@ function generate_plots(train_folder)
 
 end
 
-function predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num)
+function predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num, notch)
     % This function takes two inputs. The first is an N-D array of
     % centroids that have been trained on certain speakers in a training
     % data set. This function attempts to fit each speaker in a test data
@@ -216,6 +219,11 @@ function predict_speaker(trained_centroids, test_folder, train_folder, fft_size,
     % .wav file. I've found a minimum normalized volume of 0.05 works well
     vol_min = 0.05;
     
+    % Check if we need to use notch filter
+    if notch
+        fprintf("Predicting with notch filter. Stop band is 2-3 KHz\n")
+    end
+    
     for k=1:length(theFiles)
     
         baseFileName = theFiles(k).name;
@@ -225,6 +233,18 @@ function predict_speaker(trained_centroids, test_folder, train_folder, fft_size,
            
         % Read the .wav file
         [y, fs] = audioread(fullFileName);
+        
+        if notch
+            order = 2;
+            fs1 = 2000;
+            fs2 = 3000;
+            d = designfilt('bandstopiir','FilterOrder',order, ...
+               'HalfPowerFrequency1',fs1,'HalfPowerFrequency2',fs2, ...
+               'DesignMethod','butter','SampleRate',fs);
+           
+           % Filter our signal
+           y = filtfilt(d, y);
+        end
 
         % Normalizing the data
         y = y./max(abs(y));
@@ -324,10 +344,10 @@ function y = trim_silence(audio_data, min_volume)
     % This filtering balances the frequency spectrum since high and low
     % frequnecies are not perceived to have the same volume
     % Also avoids numerical issuses in fft and could improve snr
-%     alpha = 0.97;
-%     for n=1:length(audio_data)-1
-%         audio_data(n+1) = audio_data(n+1) - alpha*audio_data(n);
-%     end
+    alpha = 0.97;
+    for n=1:length(audio_data)-1
+        audio_data(n+1) = audio_data(n+1) - alpha*audio_data(n);
+    end
     
     % Defining a boolean variable to identify if an audio sample was
     % originally stereo

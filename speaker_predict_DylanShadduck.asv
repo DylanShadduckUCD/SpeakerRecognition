@@ -23,7 +23,9 @@ C = train_model(train_folder, N, M, K, clusters);
 predict_speaker(C, test_folder, train_folder, N, M, K)
 
 % Plotting
-generate_plots(train_folder);
+%generate_plots(train_folder);
+
+
 
 %% Functions
 
@@ -151,11 +153,11 @@ function generate_plots(train_folder)
     title("Mel Filters")
     
     % Getting data for a second user for comparison
-    [y2, fs] = audioread(strcat(train_folder, "s12.wav"));
+    [y2, fs] = audioread(strcat(train_folder, "s1.wav"));
     y2 = y2./max(abs(y2));
     y2 = trim_silence(y2, 0.05);
     
-    [y3, fs] = audioread(strcat(train_foldre, "Pico_7.wav"));
+    [y3, fs] = audioread(strcat(train_folder, "s6.wav"));
     y3 = y3./max(abs(y3));
     y3 = trim_silence(y3, 0.05);
     
@@ -189,14 +191,14 @@ function generate_plots(train_folder)
     scatter(C1(:, 7), C1(:,15), [], "rx")
     scatter(mfcc_2(7, :), mfcc_2(15, :))
     scatter(C2(:, 7), C2(:,15), [], "kx")
-    legend("User 12", "Centroids User 12", "User 13", "Centroids User 13")
+    legend("User 1", "Centroids User 1", "User 6", "Centroids User 6")
     xlabel("MFCC 7")
     ylabel("MFCC 15")
     hold off
 
 end
 
-function predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num)
+function predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num, notch)
     % This function takes two inputs. The first is an N-D array of
     % centroids that have been trained on certain speakers in a training
     % data set. This function attempts to fit each speaker in a test data
@@ -225,6 +227,18 @@ function predict_speaker(trained_centroids, test_folder, train_folder, fft_size,
            
         % Read the .wav file
         [y, fs] = audioread(fullFileName);
+        
+        if notch
+            order = 2;
+            fs1 = 2000;
+            fs2 = 3000;
+            d = designfilt('bandstopiir','FilterOrder',order, ...
+               'HalfPowerFrequency1',fs1,'HalfPowerFrequency2',fs2, ...
+               'DesignMethod','butter','SampleRate',fs);
+           
+           % Filter our signal
+           y = filtfilt(d, y);
+        end
 
         % Normalizing the data
         y = y./max(abs(y));

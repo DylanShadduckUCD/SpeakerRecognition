@@ -5,6 +5,27 @@
 clear
 clc
 
+%% Used to make plots in report in the speaker predict file
+% [y,fs] = audioread(strcat(train_folder, "s1.wav"));
+% t = (0:1/fs:(length(y) - 1)/fs);
+% figure(1)
+% plot(t, y)
+% title("Speaker 1 Raw Audio")
+% xlabel("time (s)")
+% 
+% % Normalizing the data
+% y = y./max(abs(y));
+% 
+% % Trimming the audio using minimum normalized volume of 0.05
+% y = trim_silence(y, 0.05);
+% 
+% % plot the audio file
+% t = (0:1/fs:(length(y) - 1)/fs);
+% figure(2)
+% plot(t, y)
+% title("Speaker 1 Pre Processed")
+% xlabel("time (s)")
+
 %% Reading in the speaker data
 
 % Folder for all training data
@@ -79,6 +100,25 @@ ylabel("Volume")
 
 % TODO: Look into trimming each audio file so that we don't have time when
 % the speaker isn't saying anything
+
+%% Notch Filter
+order = 2;
+fs1 = 2000;
+fs2 = 3000;
+d = designfilt('bandstopiir','FilterOrder',order, ...
+   'HalfPowerFrequency1',fs1,'HalfPowerFrequency2',fs2, ...
+   'DesignMethod','butter','SampleRate',fs);
+
+% Look at response of our filter
+fvtool(d,'Fs',fs)
+
+% Apply our notch filter to y
+y1_filt = filtfilt(d, y1);
+
+figure(2)
+plot(t, y1, t, y1_filt)
+title("Notch filtered S1")
+xlabel("time (s)")
 
 %% Frame Blocking
 
