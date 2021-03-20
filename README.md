@@ -193,7 +193,7 @@ clusters = 3;
 C = train_model(train_folder, N, M, K, clusters);
 ```
 
-predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num)
+predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_len, mel_filt_num, notch)
 * Inputs:
   * trained_centroids: N-D array of all the centroids for each cluster for each user. Typically comes from the train_model function above
   * test_foler: String with the path to the training folder
@@ -201,6 +201,7 @@ predict_speaker(trained_centroids, test_folder, train_folder, fft_size, overlap_
   * fft_size: The size of the frames for frame blocking
   * overlap_len: The number of samples that will overlap in each frame during frame blockinng
   * mel_filt_num: The number of mel spaced filters to use
+  * notch: Boolean value. If true, a notch filter with a stop band from 2-3 KHz is applied to the audio signal
 * Outputs:
   * This function prints to the stdout
 
