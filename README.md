@@ -220,7 +220,7 @@ clusters = 3;
 C = train_model(train_folder, N, M, K, clusters);
 
 % Make the predictions for our test data set
-predict_speaker(C, test_folder, train_folder, N, M, K);
+predict_speaker(C, test_folder, train_folder, N, M, K, false);
 ```
 
 generate_plots(train_folder)
